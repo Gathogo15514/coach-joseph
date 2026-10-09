@@ -3,221 +3,307 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Student Registration & Consent | Coach Joseph Gathogo</title>
-<meta name="description" content="Register your child for chess coaching with Coach Joseph Gathogo and sign the coaching policy online.">
-<meta name="robots" content="noindex">
+<title>Parent Forms | Coach</title>
+<meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="/forms/forms.css">
+<style>
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 16px; }
+  .tabs button { background: transparent; color: var(--text); border-color: var(--line); padding: 10px 14px; min-height: 40px; font-size: 14px; }
+  .tabs button[aria-pressed="true"] { background: var(--night); color: #f4f0e8; border-color: var(--night); }
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0 0 12px; }
+  .toolbar input, .toolbar select { margin: 0; flex: 1 1 180px; width: auto; min-height: 42px; }
+  .list { display: grid; gap: 8px; }
+  .item { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; cursor: pointer; text-align: left; color: var(--text); font: inherit; width: 100%; min-height: 0; }
+  .item:hover { border-color: var(--brass); }
+  .item .who { font-weight: 600; }
+  .item .meta { color: var(--muted); font-size: 13px; grid-column: 1 / -1; }
+  .badge { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+  .badge.reg { border-color: var(--brass); color: var(--brass-dk); }
+  .empty { color: var(--muted); padding: 24px 0; text-align: center; }
+  .linkout { word-break: break-all; background: var(--ivory); border: 1px solid var(--line); border-radius: 8px; padding: 12px; font-size: 14px; }
+</style>
 </head>
 <body>
-<header class="top"><div class="wrap"><span class="name">Coach Joseph Gathogo</span><span class="role">Chess Coach · Nairobi</span></div></header>
+<header class="top"><div class="wrap"><span class="name">Coach Joseph Gathogo</span><span class="role">Parent forms · Coach only</span></div></header>
 
 <main class="wrap">
-<form id="reg" novalidate>
-  <h1>Student registration &amp; consent</h1>
-  <p class="lead">Complete this once for each child before their first session. It takes about 8 minutes. Fields marked <span style="color:var(--error)">*</span> are required. You will get a copy to save or print at the end.</p>
-
-  <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-
-  <section class="card" data-section="A. Student details">
-    <h2>A. Student details</h2>
-    <div class="grid two">
-      <label class="f">Student full name<span class="req">*</span><input type="text" name="student_name" required autocomplete="off"></label>
-      <label class="f">Date of birth<span class="req">*</span><input type="date" name="student_dob" required></label>
-      <label class="f">Gender<select name="student_gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Prefer not to say</option></select></label>
-      <label class="f">School and class / grade<input type="text" name="student_school"></label>
-      <label class="f">Chess Kenya / FIDE ID<small>If any</small><input type="text" name="student_fide_id"></label>
-      <label class="f">Chess.com / Lichess username<small>If any</small><input type="text" name="student_online_username"></label>
-      <label class="f">Current level<select name="student_level"><option value="">Select</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Rated player</option></select></label>
-      <label class="f">Coaching package<span class="req">*</span><select name="package" required><option value="">Select</option><option>Standard (in person)</option><option>Silver</option><option>Gold</option><option>Online sessions</option><option>School / club programme</option><option>Not sure yet</option></select></label>
-      <label class="f">Format<select name="format"><option value="">Select</option><option>In person</option><option>Online</option><option>Both</option></select></label>
-      <label class="f">Usual session venue<input type="text" name="venue" placeholder="e.g. home, school, club"></label>
-    </div>
+  <!-- Sign in -->
+  <section id="login" class="card" style="max-width:420px;margin:24px auto">
+    <h1>Coach sign in</h1>
+    <p class="hint">Enter the password set on your Vercel project.</p>
+    <form id="login-form">
+      <label class="f">Password<input type="password" id="pw" autocomplete="current-password" required></label>
+      <p class="err-box" id="login-err" role="alert"></p>
+      <div class="actions"><button type="submit" class="primary">Sign in</button></div>
+    </form>
   </section>
 
-  <section class="card" data-section="B. Parent / guardian details">
-    <h2>B. Parent / guardian details</h2>
-    <p class="hint">Parent or guardian 1 signs this agreement and is responsible for fees.</p>
-    <div class="grid two">
-      <label class="f">Parent / guardian 1 full name<span class="req">*</span><input type="text" name="parent1_name" required autocomplete="name"></label>
-      <label class="f">Relationship to student<span class="req">*</span><input type="text" name="parent1_relationship" required placeholder="e.g. Mother"></label>
-      <label class="f">Phone (WhatsApp)<span class="req">*</span><input type="tel" name="parent1_phone" required autocomplete="tel" placeholder="07XX XXX XXX"></label>
-      <label class="f">Email<span class="req">*</span><input type="email" name="parent1_email" required autocomplete="email"></label>
-      <label class="f">ID / passport number<input type="text" name="parent1_id"></label>
-      <label class="f">Home area / address<span class="req">*</span><input type="text" name="parent1_address" required autocomplete="street-address"></label>
+  <section id="app" class="hidden">
+    <div class="tabs noprint" role="toolbar">
+      <button type="button" data-tab="subs" aria-pressed="true">Submissions</button>
+      <button type="button" data-tab="links" aria-pressed="false">Send forms to parents</button>
+      <button type="button" id="logout" style="margin-left:auto">Sign out</button>
     </div>
-    <div class="grid two" style="margin-top:14px">
-      <label class="f">Parent / guardian 2 full name<input type="text" name="parent2_name"></label>
-      <label class="f">Relationship to student<input type="text" name="parent2_relationship"></label>
-      <label class="f">Phone (WhatsApp)<input type="tel" name="parent2_phone"></label>
-      <label class="f">Email<input type="email" name="parent2_email"></label>
-    </div>
-  </section>
 
-  <section class="card" data-section="C. Emergency contacts and authorised collectors">
-    <h2>C. Emergency contacts &amp; who may collect</h2>
-    <p class="hint">At least one person other than parent 1. Only people marked "Yes" may collect your child.</p>
-    <div class="grid two">
-      <label class="f">Contact 1 name<span class="req">*</span><input type="text" name="ec1_name" required></label>
-      <label class="f">Relationship<span class="req">*</span><input type="text" name="ec1_relationship" required></label>
-      <label class="f">Phone<span class="req">*</span><input type="tel" name="ec1_phone" required></label>
-      <label class="f">May collect the student?<span class="req">*</span><select name="ec1_collect" required><option value="">Select</option><option>Yes</option><option>No</option></select></label>
-    </div>
-    <div class="grid two" style="margin-top:14px">
-      <label class="f">Contact 2 name<input type="text" name="ec2_name"></label>
-      <label class="f">Relationship<input type="text" name="ec2_relationship"></label>
-      <label class="f">Phone<input type="tel" name="ec2_phone"></label>
-      <label class="f">May collect the student?<select name="ec2_collect"><option value="">Select</option><option>Yes</option><option>No</option></select></label>
-    </div>
-  </section>
-
-  <section class="card" data-section="D. Medical information">
-    <h2>D. Medical information</h2>
-    <p class="hint">Write "None" where nothing applies. This is shared only with medical staff or organisers when needed for your child's safety.</p>
-    <div class="grid">
-      <label class="f">Medical conditions<span class="req">*</span><small>e.g. asthma, epilepsy, diabetes</small><input type="text" name="med_conditions" required></label>
-      <label class="f">Allergies<span class="req">*</span><small>Food, medicine, other</small><input type="text" name="med_allergies" required></label>
-      <label class="f">Regular medication and instructions<input type="text" name="med_medication"></label>
-      <label class="f">Special needs or learning support<input type="text" name="med_needs"></label>
-    </div>
-    <div class="grid two" style="margin-top:14px">
-      <label class="f">Medical insurance provider<input type="text" name="med_insurer"></label>
-      <label class="f">Member / policy number<input type="text" name="med_member_no"></label>
-      <label class="f">Preferred hospital / clinic<input type="text" name="med_hospital"></label>
-      <label class="f">Family doctor name and phone<input type="text" name="med_doctor"></label>
-    </div>
-  </section>
-
-  <section class="card" data-section="E. Consents">
-    <h2>E. Consents</h2>
-    <p class="hint">Answer each one. You can change any consent later by telling the coach in writing.</p>
-    <div class="yn" data-required><span class="q">1. Emergency first aid and medical treatment as set out in Section 5 of the policy</span><span class="opts"><label><input type="radio" name="c_medical" value="Yes">Yes</label><label><input type="radio" name="c_medical" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">2. My child may attend tournaments and events in Nairobi with the coach</span><span class="opts"><label><input type="radio" name="c_events_nairobi" value="Yes">Yes</label><label><input type="radio" name="c_events_nairobi" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">3. My child may attend events outside Nairobi with the coach (a separate event form is still needed for each trip)</span><span class="opts"><label><input type="radio" name="c_events_outside" value="Yes">Yes</label><label><input type="radio" name="c_events_outside" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">4. My child may attend overnight events (a separate event form is still needed for each trip)</span><span class="opts"><label><input type="radio" name="c_overnight" value="Yes">Yes</label><label><input type="radio" name="c_overnight" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">5. My child may travel by public transport, hired vehicle or organiser transport arranged for an event</span><span class="opts"><label><input type="radio" name="c_transport" value="Yes">Yes</label><label><input type="radio" name="c_transport" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">6. My child may leave the venue alone after sessions</span><span class="opts"><label><input type="radio" name="c_leave_alone" value="Yes">Yes</label><label><input type="radio" name="c_leave_alone" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">7. Photos / videos may be used privately for coaching feedback and progress reports</span><span class="opts"><label><input type="radio" name="c_photos_private" value="Yes">Yes</label><label><input type="radio" name="c_photos_private" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">8. Photos / videos (first name only) may be used on the coach's website and social media</span><span class="opts"><label><input type="radio" name="c_photos_public" value="Yes">Yes</label><label><input type="radio" name="c_photos_public" value="No">No</label></span></div>
-    <div class="yn" data-required><span class="q">9. My child may be added to a coach-managed chess group chat that includes parents</span><span class="opts"><label><input type="radio" name="c_group_chat" value="Yes">Yes</label><label><input type="radio" name="c_group_chat" value="No">No</label></span></div>
-  </section>
-
-  <section class="card" data-section="F. Coaching policy and agreement">
-    <h2>F. Coaching policy &amp; agreement</h2>
-    <p class="hint">Please open and read the full policy, then tick each box.</p>
-
-    <details class="policy">
-      <summary>Read the Chess Coaching Policy &amp; Parent Consent Agreement</summary>
-      <div class="body">
-        <h3>1. About this agreement</h3>
-        <p>By enrolling a child, the parent or legal guardian accepts every term in this policy. Coach: Joseph Gathogo, Chess Coach &amp; School Instructor, Nairobi, Kenya. Contact: 0746 451 222 (calls / WhatsApp), chess1elite@gmail.com, coach.chesslead.org.</p>
-        <p>"Coach" includes any assistant coach, arbiter or partner coach engaged by Joseph Gathogo. "Parent" is the signing parent or guardian, responsible for the Student and for all fees. "Student" is the child (under 18). "Session" is any private, group, school, club or online lesson. "Event" is any tournament, competition, simul, camp, training day, trip or excursion, in or outside Nairobi, including travel to and from it. "Written notice" is a WhatsApp message or email to the contacts above, counted from when it is received.</p>
-        <p>The agreement covers every Session and Event until ended under Section 10. Where a school or club has its own contract with the Coach, that contract governs fees and scheduling, and this policy governs conduct, safety, media and liability. The Coach may update this policy with 14 days' written notice; continuing after that date means the changes are accepted. If one clause is unenforceable, the rest still applies.</p>
-
-        <h3>2. Services, fees and payment</h3>
-        <p>Fees are charged per Session at the rates in the Coach's current written fee schedule. Coaching does not include tournament entry fees, federation or rating fees, transport, meals, accommodation or other Event costs; these are paid by the Parent. No results, ratings, titles or selection are guaranteed.</p>
-        <ul>
-          <li>Payment is by M-Pesa or bank transfer to the details on the invoice; cash only against a written receipt.</li>
-          <li>After a Session or block is confirmed, the Parent pays in full or the agreed deposit; any balance is due within 7 days of the invoice date.</li>
-          <li>Packages are paid in advance and must be used within the period on the invoice. Unused Sessions expire without refund, except where the Coach cancels.</li>
-          <li>Invoices unpaid 14 days after the due date may lead to Sessions and Event support being suspended. Reasonable recovery costs may be added.</li>
-          <li>Fee changes are notified in writing at least 14 days in advance. Fees paid are non-refundable except as set out in Sections 3 and 10.</li>
-        </ul>
-
-        <h3>3. Cancellations, rescheduling and missed sessions</h3>
-        <p><strong>Any Session cancelled with less than 24 hours' written notice is invoiced and payable in full.</strong></p>
-        <ul>
-          <li>24 hours' written notice or more: no charge; Session moved to an agreed time.</li>
-          <li>Less than 24 hours' notice, no-show or no notice: 100% of the Session fee invoiced.</li>
-          <li>Late arrival or late log-in: full fee; the Session ends at the scheduled time.</li>
-          <li>Student sent home for misconduct: full fee.</li>
-          <li>Coach cancels: no charge; Session rescheduled or credited.</li>
-          <li>Event entries cancelled after the organiser's deadline are not refunded by the Coach.</li>
-        </ul>
-        <p>Notice must be written (WhatsApp 0746 451 222 or chess1elite@gmail.com); messages passed through the Student, a driver or school staff do not count. The 24 hours are counted back from the start time. Illness, travel, school activities, exams, family events, traffic and weather are not exceptions; the Coach may waive a charge in a genuine emergency at his sole discretion, and one waiver creates no right to another. Three or more late cancellations or no-shows in a month may lead to the regular slot being released. The Coach waits 15 minutes before treating a Session as a no-show. A Student not collected on time may be charged a supervision fee for each extra 30 minutes at half the hourly rate. The Coach may cancel for illness, emergencies, Event duties, unsafe conditions or power/internet failure, with the Session rescheduled or credited and no other liability.</p>
-
-        <h3>4. Conduct, safeguarding and supervision</h3>
-        <p>Sessions take place in open, visible settings. The Coach will not be alone with a Student behind a closed door, will not transport a Student alone except as agreed in writing for an Event, communicates through the Parent or groups that include parents, and keeps any contact appropriate. Safeguarding concerns are reported to the Parent and, where the law requires, to the school or authorities.</p>
-        <p>The Student agrees to respect everyone; follow the FIDE Laws of Chess and fair play; never use engines, phones or outside help where not allowed; look after equipment (deliberate or careless damage is charged at replacement cost); stay in agreed areas; and avoid bullying, fighting, abusive language, theft or dangerous behaviour. Breaches may lead to a warning, removal, collection by the Parent or ending coaching, with fees still payable.</p>
-        <p>The Parent drops off and collects on time (the Coach's duty of care runs from the start to the end of the Session), keeps contacts current and stays reachable, behaves respectfully, does not coach or signal a Student during play at Events, and tells the Coach about anything affecting safety or learning. Only the Parent or people authorised in this form may collect the Student; the Coach may refuse anyone else. Where the Parent allows the Student to leave alone, the Coach has no responsibility once the Student leaves the venue.</p>
-
-        <h3>5. Health, medical care and emergencies</h3>
-        <p>The Parent discloses any condition, allergy, medication or special need and updates the Coach in writing. The Coach is not a medical professional and does not give medication; a Student needing medication carries and takes it with written instructions. In an emergency the Coach first tries the Parent and emergency contacts; if no one can be reached quickly, the Parent authorises the Coach to arrange first aid, call an ambulance, and take or send the Student to the nearest suitable hospital, and authorises qualified medical staff to give necessary treatment. All medical and related costs are paid by the Parent or their insurer, and anything the Coach pays is repaid within 7 days. The Parent keeps suitable medical insurance. Medical information is shared only where needed for safety.</p>
-
-        <h3>6. Tournaments, travel and trips</h3>
-        <p>The Coach takes or accompanies Students to Events only with consent in this form and a separate event form for each Event outside Nairobi or involving an overnight stay. Parents are welcome to accompany their child.</p>
-        <ul>
-          <li>The Coach shares Event details, travel plan and costs in writing. The Parent confirms in writing and pays all Event costs in advance, including the Coach's Event support fee where it applies.</li>
-          <li>The Parent gives correct registration details and any required documents. The Coach is not responsible for disqualification or rating errors caused by wrong or late information. Entry fees follow the organiser's refund rules.</li>
-          <li>Travel may be by public transport, hired licensed vehicle, school or club bus, organiser transport or a consenting parent's vehicle. The Coach is not a transport operator and is not responsible for road and travel risks or the acts of drivers, operators or other road users. Where the Parent arranges transport, the Coach's responsibility runs only from check-in at the venue to collection or the end of the Event.</li>
-          <li>The Coach provides reasonable group supervision but cannot watch each Student every minute; during play Students are under the arbiters and organisers. Organisers, arbiters and venues are responsible for their own premises, rules, food and security.</li>
-          <li>Overnight: Students share rooms only with Students of the same sex or their own Parent; the Coach never shares a room with a Student; where possible another adult travels; curfew applies; alcohol, tobacco, vaping, drugs and weapons are prohibited; the Parent provides spending money.</li>
-          <li>A Student who breaks the code of conduct, puts anyone at risk or becomes too unwell may be sent home; the Parent collects or authorises the Coach to arrange the safest return, at the Parent's cost, without refund of Event fees.</li>
-          <li>The Coach is not liable for costs caused by organisers changing or cancelling Events, but passes on any refund received, and may withdraw a Student or cancel a trip where conditions are unsafe.</li>
-        </ul>
-
-        <h3>7. Online coaching</h3>
-        <p>The Parent provides a working device, internet, power and platform accounts. An adult should be within reach during online Sessions for Students under 13. Time lost to problems on the Student's side is not made up and is charged; time lost on the Coach's side is made up or credited. Sessions are not recorded without written agreement. The Coach is not responsible for contact with other users on public platforms outside Sessions, or for platform outages.</p>
-
-        <h3>8. Risk, release of liability and indemnity</h3>
-        <p>To the fullest extent permitted by Kenyan law, the Parent accepts the ordinary risks of coaching, Events and travel (including transport accidents, falls, illness or food reactions, injury caused by others, theft or loss, fire, weather, unrest and competition stress) on behalf of the Student and themselves, and releases the Coach and his assistants from all claims connected with any Session, Event, trip or travel, except where caused by the Coach's gross negligence or wilful misconduct. Nothing limits liability that the law does not allow to be excluded.</p>
-        <p>The Coach is not responsible for schools, clubs, venues, hotels, organisers, arbiters, transport operators, caterers, online platforms, other players or other parents. Belongings are brought at the Student's own risk. Any liability not released is limited to the coaching fees paid in the three months before the claim arose, and excludes indirect losses. The Parent indemnifies the Coach against claims and costs arising from the Student's behaviour or deliberate damage, false or incomplete information given by the Parent, the Parent's breach of this agreement, or any released claim brought by or for the Student. Coaching advice is given in good faith with no guarantee of results.</p>
-
-        <h3>9. Photos, media, privacy and materials</h3>
-        <p>Photos and videos are used only as consented in this form, with first names only when published; home address, timetable and contact details are never published. Consent can be withdrawn in writing; published posts the Coach controls are taken down on request. At public Events, organisers, media and spectators may publish photos, broadcasts, games and results outside the Coach's control.</p>
-        <p>Under the Data Protection Act, 2019, the Coach collects only what is needed to coach, register for Events, invoice and keep the Student safe; keeps it securely; shares it only with organisers, federations, schools, medical staff or payment providers where needed; never sells it; and deletes it up to 2 years after coaching ends unless the law requires longer. The Parent may ask to see, correct or delete it in writing. Progress records may be kept on the Coach's coaching tools, including ChessLead. All coaching materials remain the Coach's property, for the Student's personal use only.</p>
-
-        <h3>10. Ending coaching, disputes and general terms</h3>
-        <p>Either side may end coaching with 7 days' written notice; fees for Sessions held, late-cancelled or inside the notice period remain payable. Parent notice: unused prepaid Sessions may be used within the notice period but are not refunded. Coach notice: unused prepaid Sessions are refunded in proportion. The Coach may end coaching immediately for serious misconduct, abusive or threatening behaviour, non-payment beyond 30 days, or risk to others. Sections 2 (unpaid fees), 8, 9 and 10 survive.</p>
-        <p>Concerns are raised in writing first, with a response within 7 days; if not resolved within 14 days, both sides try mediation in Nairobi before court. Kenyan law governs, and the courts of Kenya (Nairobi) have jurisdiction. The Coach is not liable for failures caused by events beyond reasonable control. This policy, this form, the current fee schedule and any event form make up the whole agreement; verbal promises are not binding unless confirmed in writing. This online signature is as valid as a signature on paper. The English version prevails over any translation.</p>
+    <!-- Submissions -->
+    <div id="tab-subs">
+      <div id="list-view">
+        <div class="toolbar noprint">
+          <input type="search" id="q" placeholder="Search student, parent or event">
+          <select id="kind">
+            <option value="all">All forms</option>
+            <option value="registration">Registrations</option>
+            <option value="event:nairobi">Events · Nairobi tournaments</option>
+            <option value="event:outside">Events · Outside Nairobi</option>
+            <option value="event:overnight">Events · Overnight</option>
+            <option value="event:trip">Events · Trips</option>
+          </select>
+          <button type="button" class="ghost small" id="refresh">Refresh</button>
+          <button type="button" class="ghost small" id="csv">Download spreadsheet</button>
+        </div>
+        <p class="muted" id="count"></p>
+        <div class="list" id="list"></div>
       </div>
-    </details>
+      <div id="detail-view" class="hidden">
+        <div class="actions noprint" style="margin:0 0 12px">
+          <button type="button" class="ghost" id="back">← All submissions</button>
+          <button type="button" id="print">Print / save as PDF</button>
+          <button type="button" class="ghost" id="delete" style="margin-left:auto">Delete</button>
+        </div>
+        <div id="detail"></div>
+      </div>
+    </div>
 
-    <div style="margin-top:14px">
-      <label class="check" data-label="I have read and agree to the whole Chess Coaching Policy & Parent Consent Agreement"><input type="checkbox" name="agree_policy" required><span>I have read and agree to the whole <strong>Chess Coaching Policy &amp; Parent Consent Agreement</strong>.<span class="req" style="color:var(--error)">*</span></span></label>
-      <label class="check" data-label="I understand sessions cancelled with less than 24 hours' written notice are invoiced in full (Section 3)"><input type="checkbox" name="agree_24h" required><span>I understand any session cancelled with <strong>less than 24 hours' written notice</strong> is invoiced in full (Section 3).<span class="req" style="color:var(--error)">*</span></span></label>
-      <label class="check" data-label="I understand the tournament and travel terms (Section 6)"><input type="checkbox" name="agree_events" required><span>I understand the <strong>tournament, travel and trip terms</strong> (Section 6).<span class="req" style="color:var(--error)">*</span></span></label>
-      <label class="check" data-label="I accept the release of liability and indemnity (Section 8)"><input type="checkbox" name="agree_liability" required><span>I accept the <strong>release of liability and indemnity</strong> (Section 8).<span class="req" style="color:var(--error)">*</span></span></label>
-      <label class="check" data-label="The information I have given is true and complete, and I will update the coach in writing if it changes"><input type="checkbox" name="agree_true" required><span>The information I have given is true and complete, and I will update the coach in writing if it changes.<span class="req" style="color:var(--error)">*</span></span></label>
+    <!-- Link builder -->
+    <div id="tab-links" class="hidden">
+      <section class="card">
+        <h2>Registration form</h2>
+        <p class="hint">Send once to every new family.</p>
+        <div class="linkout" id="reg-link"></div>
+        <div class="actions"><button type="button" class="small" data-copy="reg-link">Copy link</button><a class="btn ghost small" id="reg-wa" target="_blank" rel="noopener">Share on WhatsApp</a></div>
+      </section>
+
+      <section class="card">
+        <h2>Event form with details filled in</h2>
+        <p class="hint">Fill in what you know. Parents see these details locked and only add their child's information.</p>
+        <form id="builder" class="grid two">
+          <label class="f">Type of event<select name="cat"><option value="nairobi">Tournament within Nairobi</option><option value="outside">Tournament outside Nairobi (day)</option><option value="overnight">Overnight tournament or camp</option><option value="trip">Educational trip or excursion</option></select></label>
+          <label class="f">Event name<input type="text" name="name"></label>
+          <label class="f" data-for="nairobi outside overnight">Organiser<input type="text" name="organiser"></label>
+          <label class="f" data-for="trip">Purpose / activity<input type="text" name="purpose"></label>
+          <label class="f">Venue / location<input type="text" name="venue"></label>
+          <label class="f" data-for="outside overnight trip">Town and county<input type="text" name="town"></label>
+          <label class="f">Start date<input type="date" name="start"></label>
+          <label class="f" data-for="overnight">End date<input type="date" name="end"></label>
+          <label class="f" data-for="nairobi outside overnight">Section / age category<input type="text" name="section"></label>
+          <label class="f" data-for="nairobi outside overnight">Time control / rounds<input type="text" name="rounds"></label>
+          <label class="f" data-for="nairobi outside overnight">Entry fee (KES)<input type="number" name="fee" min="0"></label>
+          <label class="f">Total cost to parent (KES)<input type="number" name="cost" min="0"></label>
+          <label class="f" data-for="nairobi">Report time<input type="time" name="report"></label>
+          <label class="f" data-for="nairobi">Finish time<input type="time" name="finish"></label>
+          <label class="f" data-for="nairobi">Meeting point<input type="text" name="meet"></label>
+          <label class="f" data-for="outside overnight trip">Departure point<input type="text" name="from"></label>
+          <label class="f" data-for="outside overnight trip">Departure time<input type="time" name="depart"></label>
+          <label class="f" data-for="outside overnight trip">Return date<input type="date" name="retdate"></label>
+          <label class="f" data-for="outside overnight trip">Return time<input type="time" name="ret"></label>
+          <label class="f" data-for="outside overnight trip">Means of transport<select name="transport"><option value="">Parent chooses</option><option>Public transport (bus / matatu / train)</option><option>Hired vehicle with licensed driver</option><option>School / club bus</option><option>Organiser transport</option><option>Parent's own vehicle</option><option>Another parent's vehicle</option></select></label>
+          <label class="f" data-for="outside overnight trip">Transport company / vehicle reg.<input type="text" name="vehicle"></label>
+          <label class="f" data-for="outside overnight trip">Meals<select name="meals"><option value="">Parent chooses</option><option>Included in trip cost</option><option>Child carries packed food</option><option>Child carries money for meals</option><option>Provided by organiser</option></select></label>
+          <label class="f" data-for="overnight">Accommodation name<input type="text" name="accom"></label>
+          <label class="f" data-for="overnight">Accommodation address / phone<input type="text" name="accomcontact"></label>
+          <label class="f" data-for="overnight">Check-in<input type="date" name="checkin"></label>
+          <label class="f" data-for="overnight">Check-out<input type="date" name="checkout"></label>
+          <label class="f" data-for="overnight">Other adults travelling<input type="text" name="adults"></label>
+        </form>
+        <div class="linkout" id="evt-link" style="margin-top:14px"></div>
+        <div class="actions"><button type="button" class="small" data-copy="evt-link">Copy link</button><a class="btn ghost small" id="evt-wa" target="_blank" rel="noopener">Share on WhatsApp</a><a class="btn ghost small" id="evt-open" target="_blank" rel="noopener">Preview</a></div>
+      </section>
     </div>
   </section>
-
-  <section class="card" data-section="G. Signature">
-    <h2>G. Signature</h2>
-    <p class="hint">Sign with your finger or mouse. I am the parent or legal guardian of the student named above.</p>
-    <div class="grid two">
-      <label class="f">Full name of person signing<span class="req">*</span><input type="text" name="signed_name" required></label>
-      <label class="f">Date<span class="req">*</span><input type="date" name="signed_date" required></label>
-    </div>
-    <div class="sig-box">
-      <canvas class="sig" aria-label="Signature pad"></canvas>
-      <span class="ph">Sign here</span>
-      <button type="button" class="ghost small clear">Clear</button>
-    </div>
-    <p class="err-box" role="alert"></p>
-    <div class="actions"><button type="submit" class="primary">Submit registration</button></div>
-  </section>
-</form>
-
-<section id="done" class="hidden done">
-  <div class="card noprint">
-    <h1>Thank you, registration received</h1>
-    <p>Your reference number is <span class="ref"></span>. Coach Joseph has a copy. Please save or print your own copy below.</p>
-    <div class="actions"><button type="button" id="print-copy">Save or print my copy</button></div>
-  </div>
-  <div class="copy-slot"></div>
-</section>
 </main>
-<footer class="foot">Coach Joseph Gathogo · 0746 451 222 · chess1elite@gmail.com · coach.chesslead.org</footer>
 
 <script src="/forms/forms.js"></script>
 <script>
-  ParentForms.setupForm({
-    formId: 'reg',
-    type: 'registration',
-    policyVersion: '2026-10-09',
-    submitLabel: 'Submit registration',
-    copyTitle: (d) => `Student registration & consent: ${d.student_name}`,
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const CAT = { nairobi: 'Nairobi tournament', outside: 'Outside Nairobi', overnight: 'Overnight', trip: 'Trip' };
+  let password = '';
+  try { password = sessionStorage.getItem('coach_pw') || ''; } catch (e) {}
+  let items = [];
+  let current = null;
+
+  async function api(path, method = 'GET') {
+    const res = await fetch(path, { method, headers: { 'x-admin-password': password } });
+    const out = await res.json().catch(() => ({}));
+    if (res.status === 401) throw Object.assign(new Error('Wrong password.'), { auth: true });
+    if (!res.ok) throw new Error(out.error || 'Could not load. Try again.');
+    return out;
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleString('en-KE', { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  // ----- Sign in -----
+  $('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    password = $('pw').value;
+    $('login-err').textContent = '';
+    try { await load(); try { sessionStorage.setItem('coach_pw', password); } catch (e2) {} }
+    catch (err) { $('login-err').textContent = err.message; }
   });
+  $('logout').addEventListener('click', () => {
+    try { sessionStorage.removeItem('coach_pw'); } catch (e) {}
+    location.reload();
+  });
+
+  async function load() {
+    const out = await api('/api/submissions');
+    items = out.items || [];
+    $('login').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    render();
+  }
+
+  // ----- List -----
+  function filtered() {
+    const q = $('q').value.trim().toLowerCase();
+    const k = $('kind').value;
+    return items.filter((it) => {
+      if (k === 'registration' && it.type !== 'registration') return false;
+      if (k.startsWith('event:') && !(it.type === 'event' && it.category === k.slice(6))) return false;
+      if (!q) return true;
+      return [it.student_name, it.parent_name, it.event_name, it.ref, it.parent_phone].join(' ').toLowerCase().includes(q);
+    });
+  }
+
+  function render() {
+    const list = filtered();
+    $('count').textContent = `${list.length} of ${items.length} submission${items.length === 1 ? '' : 's'}`;
+    $('list').innerHTML = list.length ? '' : '<p class="empty">No submissions yet.</p>';
+    list.forEach((it) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'item';
+      const what = it.type === 'registration' ? 'Registration' : `${CAT[it.category] || 'Event'} · ${it.event_name}`;
+      b.innerHTML = `<span class="who"></span><span class="badge ${it.type === 'registration' ? 'reg' : ''}"></span><span class="meta"></span>`;
+      b.querySelector('.who').textContent = it.student_name || '(no name)';
+      b.querySelector('.badge').textContent = it.type === 'registration' ? 'Registration' : (CAT[it.category] || 'Event');
+      b.querySelector('.meta').textContent = `${what} · ${it.parent_name} ${it.parent_phone} · ${fmtDate(it.submitted_at)} · ${it.ref}`;
+      b.addEventListener('click', () => openItem(it));
+      $('list').appendChild(b);
+    });
+  }
+  $('q').addEventListener('input', render);
+  $('kind').addEventListener('change', render);
+  $('refresh').addEventListener('click', () => load().catch((e) => alert(e.message)));
+
+  // ----- Detail -----
+  function sectionsFrom(record) {
+    const d = record.data || {};
+    const rows = Object.entries(d).map(([k, v]) => {
+      const label = k.replace(/_/g, ' ').replace(/^c /, 'Consent: ').replace(/^agree /, 'Agreed: ').replace(/^ack /, 'Acknowledged: ');
+      const val = v === true ? 'Agreed' : v === false ? 'Not agreed' : (k === 'category' ? (CAT[v] || v) : (v || '—'));
+      return [label.charAt(0).toUpperCase() + label.slice(1), String(val)];
+    });
+    return [{ title: record.type === 'registration' ? 'Registration details' : 'Event consent details', rows }];
+  }
+
+  async function openItem(it) {
+    $('list-view').classList.add('hidden');
+    $('detail-view').classList.remove('hidden');
+    $('detail').innerHTML = '<p class="muted">Loading…</p>';
+    try {
+      const rec = await api('/api/submissions?pathname=' + encodeURIComponent(it.pathname));
+      current = it;
+      const title = rec.type === 'registration'
+        ? `Student registration & consent: ${rec.data.student_name}`
+        : `Event consent: ${rec.data.student_name} · ${rec.data.event_name}`;
+      $('detail').innerHTML = ParentForms.renderCopy(title, rec.ref, fmtDate(rec.submitted_at), sectionsFrom(rec), rec.signature)
+        + `<p class="muted" style="font-size:12px">Policy version ${ParentForms.esc(rec.policy_version || '')} · Device: ${ParentForms.esc(rec.user_agent || '')}</p>`;
+      window.scrollTo(0, 0);
+    } catch (err) { $('detail').innerHTML = `<p class="err-box">${ParentForms.esc(err.message)}</p>`; }
+  }
+  $('back').addEventListener('click', () => {
+    $('detail-view').classList.add('hidden');
+    $('list-view').classList.remove('hidden');
+  });
+  $('print').addEventListener('click', () => window.print());
+  $('delete').addEventListener('click', async () => {
+    if (!current || !confirm(`Delete ${current.ref} for ${current.student_name}? This cannot be undone.`)) return;
+    try {
+      await api('/api/submissions?pathname=' + encodeURIComponent(current.pathname), 'DELETE');
+      items = items.filter((i) => i.pathname !== current.pathname);
+      $('back').click();
+      render();
+    } catch (err) { alert(err.message); }
+  });
+
+  // ----- Spreadsheet export -----
+  $('csv').addEventListener('click', () => {
+    const list = filtered();
+    const keys = ['ref', 'type', 'submitted_at'];
+    list.forEach((it) => Object.keys(it.data || {}).forEach((k) => { if (!keys.includes(k)) keys.push(k); }));
+    const cell = (v) => {
+      let s = v === undefined || v === null ? '' : String(v);
+      if (/^[=+\-@]/.test(s)) s = "'" + s; // stop spreadsheet formulas
+      return '"' + s.replace(/"/g, '""') + '"';
+    };
+    const lines = [keys.join(',')].concat(list.map((it) =>
+      keys.map((k) => cell(k in it && k !== 'data' ? it[k] : (it.data || {})[k])).join(',')
+    ));
+    const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `parent-forms-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // ----- Tabs -----
+  document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    $('tab-subs').classList.toggle('hidden', b.dataset.tab !== 'subs');
+    $('tab-links').classList.toggle('hidden', b.dataset.tab !== 'links');
+  }));
+
+  // ----- Link builder -----
+  const origin = location.origin;
+  const regUrl = origin + '/register';
+  $('reg-link').textContent = regUrl;
+  $('reg-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
+    'Hello, please complete the chess coaching registration and consent form for your child before the first session: ' + regUrl + '\n\nCoach Joseph Gathogo');
+  const builder = $('builder');
+  function buildLink() {
+    const cat = builder.elements.namedItem('cat').value;
+    builder.querySelectorAll('[data-for]').forEach((l) => l.classList.toggle('hidden', !l.dataset.for.split(' ').includes(cat)));
+    const params = new URLSearchParams({ cat });
+    builder.querySelectorAll('input, select').forEach((el) => {
+      if (el.name === 'cat' || !el.value || el.closest('.hidden')) return;
+      params.set(el.name, el.value);
+    });
+    const url = origin + '/event?' + params.toString();
+    $('evt-link').textContent = url;
+    $('evt-open').href = url;
+    const nm = builder.elements.namedItem('name').value || 'the upcoming event';
+    $('evt-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
+      `Hello, please fill in the consent form for ${nm} so your child can take part: ${url}\n\nCoach Joseph Gathogo`);
+  }
+  builder.addEventListener('input', buildLink);
+  builder.addEventListener('change', buildLink);
+  buildLink();
+  document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+    const text = $(b.dataset.copy).textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
+    catch (e) { prompt('Copy this link:', text); }
+    setTimeout(() => { b.textContent = 'Copy link'; }, 1500);
+  }));
+
+  if (password) load().catch(() => { password = ''; });
+})();
 </script>
 </body>
 </html>
