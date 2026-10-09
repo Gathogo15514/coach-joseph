@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Event Consent | Coach Joseph Gathogo</title>
+<title>Form 2: Event Consent | Coach Joseph Gathogo</title>
 <meta name="description" content="Parent consent for a chess tournament, trip or event with Coach Joseph Gathogo.">
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="/forms/forms.css">
@@ -20,14 +20,15 @@
 
 <main class="wrap">
 <form id="evt" novalidate>
+  <p class="muted" style="margin:0;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px">Form 2 of 2</p>
   <h1>Event consent</h1>
-  <p class="lead">One short form per child, per event. It takes about 2 minutes.</p>
+  <p class="lead"><strong>For one tournament, trip or event.</strong> One short form per child, per event. It takes about 2 minutes.</p>
 
   <div class="notice noprint">
     <span>
-      <strong>Haven't filled the coaching policy form yet?</strong>
-      Every child needs it once before any event.
-      <a href="/register">Click here to fill the policy &amp; registration form</a>, then come back to this page.
+      <strong>New parent? Fill Form 1 first.</strong>
+      Every child needs the coaching policy form once before any event.
+      <a href="/register">Click here to fill Form 1: New student &amp; coaching policy</a>, then come back to this page.
     </span>
   </div>
 
@@ -92,7 +93,7 @@
 
 <section id="done" class="hidden done">
   <div class="card noprint">
-    <h1>Thank you, consent received</h1>
+    <h1>Thank you, Form 2 received</h1>
     <p>Your reference number is <span class="ref"></span>. Coach Joseph has a copy. You can save or print yours below.</p>
     <div class="actions"><button type="button" id="print-copy">Save or print my copy</button></div>
   </div>
@@ -119,6 +120,16 @@
   const p = new URLSearchParams(location.search);
   const cat = p.get('cat');
   const fromLink = CATS[cat] && p.get('name');
+  if (!fromLink) {
+    form.innerHTML = '<p class="muted" style="margin:0;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px">Form 2 of 2</p>'
+      + '<h1>Event consent</h1>'
+      + '<div class="card"><h2>Please use the link from Coach Joseph</h2>'
+      + '<p>This form only opens from the event link Coach Joseph sends you, so the event details are already filled in.</p>'
+      + '<p>Don\'t have it? WhatsApp <strong>0746 451 222</strong> and ask for the event link.</p>'
+      + '<p>Looking to start coaching sessions or registering your child for the first time? '
+      + '<a href="/register"><strong>Fill Form 1: New student &amp; coaching policy</strong></a>.</p></div>';
+    return;
+  }
   if (fromLink) {
     const set = (n, v) => { const el = form.querySelector(`[name="${n}"]`); if (el) el.value = v || ''; };
     form.querySelector(`input[name="category"][value="${cat}"]`).checked = true;

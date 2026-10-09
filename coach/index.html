@@ -78,14 +78,14 @@
     <!-- Link builder -->
     <div id="tab-links" class="hidden">
       <section class="card">
-        <h2>Registration form</h2>
-        <p class="hint">Send once to every new family.</p>
+        <h2>Form 1: New student &amp; coaching policy</h2>
+        <p class="hint">For new families and regular sessions. Each child fills it once.</p>
         <div class="linkout" id="reg-link"></div>
         <div class="actions"><button type="button" class="small" data-copy="reg-link">Copy link</button><a class="btn ghost small" id="reg-wa" target="_blank" rel="noopener">Share on WhatsApp</a></div>
       </section>
 
       <section class="card">
-        <h2>Event link</h2>
+        <h2>Form 2: Event consent link</h2>
         <p class="hint">Fill in the event once, then share the link. Parents see these details and only add their child's information.</p>
         <form id="builder" class="grid two">
           <label class="f">Type of event<select name="cat"><option value="nairobi">Tournament within Nairobi</option><option value="outside">Tournament outside Nairobi (same day)</option><option value="overnight">Overnight tournament or camp</option><option value="trip">Educational trip</option></select></label>
@@ -253,7 +253,7 @@
   const regUrl = origin + '/register';
   $('reg-link').textContent = regUrl;
   $('reg-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
-    'Hello, please complete the chess coaching registration and consent form for your child before the first session: ' + regUrl + '\n\nCoach Joseph Gathogo');
+    'Hello, welcome to chess coaching. Please fill Form 1 (new student & coaching policy) for your child. It is done once only and takes about 8 minutes: ' + regUrl + '\n\nThank you,\nCoach Joseph Gathogo · 0746 451 222');
   const builder = $('builder');
   function buildLink() {
     const cat = builder.elements.namedItem('cat').value;
@@ -267,7 +267,7 @@
     $('evt-open').href = url;
     const nm = builder.elements.namedItem('name').value || 'the upcoming event';
     $('evt-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
-      `Hello, please fill in the consent form for ${nm} so your child can take part: ${url}\n\nCoach Joseph Gathogo`);
+      `Hello, your child is coming for ${nm}. Please fill Form 2 (event consent) for this event. It takes 2 minutes: ${url}\n\nIf you have not yet filled Form 1 (new student & coaching policy), please fill it first: ${origin}/register\n\nThank you,\nCoach Joseph Gathogo · 0746 451 222`);
   }
   builder.addEventListener('input', buildLink);
   builder.addEventListener('change', buildLink);
