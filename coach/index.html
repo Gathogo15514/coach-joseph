@@ -42,7 +42,8 @@
   <section id="app" class="hidden">
     <div class="tabs noprint" role="toolbar">
       <button type="button" data-tab="subs" aria-pressed="true">Submissions</button>
-      <button type="button" data-tab="links" aria-pressed="false">Send forms to parents</button>
+      <button type="button" data-tab="event" aria-pressed="false">Event link</button>
+      <button type="button" data-tab="new" aria-pressed="false">New student form</button>
       <button type="button" id="logout" style="margin-left:auto">Sign out</button>
     </div>
 
@@ -76,14 +77,7 @@
     </div>
 
     <!-- Link builder -->
-    <div id="tab-links" class="hidden">
-      <section class="card">
-        <h2>Form 1: New student &amp; coaching policy</h2>
-        <p class="hint">For new families and regular sessions. Each child fills it once.</p>
-        <div class="linkout" id="reg-link"></div>
-        <div class="actions"><button type="button" class="small" data-copy="reg-link">Copy link</button><a class="btn ghost small" id="reg-wa" target="_blank" rel="noopener">Share on WhatsApp</a></div>
-      </section>
-
+    <div id="tab-event" class="hidden">
       <section class="card">
         <h2>Form 2: Event consent link</h2>
         <p class="hint">Fill in the event once, then share the link. Parents see these details and only add their child's information.</p>
@@ -95,7 +89,16 @@
           <label class="f">Organisers<input type="text" name="organiser"></label>
         </form>
         <div class="linkout" id="evt-link" style="margin-top:14px"></div>
-        <div class="actions"><button type="button" class="small" data-copy="evt-link">Copy link</button><a class="btn ghost small" id="evt-wa" target="_blank" rel="noopener">Share on WhatsApp</a><a class="btn ghost small" id="evt-open" target="_blank" rel="noopener">Preview</a></div>
+        <div class="actions" id="evt-actions"><button type="button" class="small" data-copy="evt-link">Copy link</button><a class="btn ghost small" id="evt-wa" target="_blank" rel="noopener">Share on WhatsApp</a><a class="btn ghost small" id="evt-open" target="_blank" rel="noopener">Preview the form</a></div>
+      </section>
+    </div>
+
+    <div id="tab-new" class="hidden">
+      <section class="card">
+        <h2>Form 1: New student &amp; coaching policy</h2>
+        <p class="hint">For new families and regular sessions. Each child fills it once.</p>
+        <div class="linkout" id="reg-link"></div>
+        <div class="actions"><button type="button" class="small" data-copy="reg-link">Copy link</button><a class="btn ghost small" id="reg-wa" target="_blank" rel="noopener">Share on WhatsApp</a></div>
       </section>
     </div>
   </section>
@@ -245,7 +248,8 @@
   document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
     document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     $('tab-subs').classList.toggle('hidden', b.dataset.tab !== 'subs');
-    $('tab-links').classList.toggle('hidden', b.dataset.tab !== 'links');
+    $('tab-event').classList.toggle('hidden', b.dataset.tab !== 'event');
+    $('tab-new').classList.toggle('hidden', b.dataset.tab !== 'new');
   }));
 
   // ----- Link builder -----
@@ -256,18 +260,16 @@
     'Hello, welcome to chess coaching. Please fill Form 1 (new student & coaching policy) for your child. It is done once only and takes about 8 minutes: ' + regUrl + '\n\nThank you,\nCoach Joseph Gathogo · 0746 451 222');
   const builder = $('builder');
   function buildLink() {
-    const cat = builder.elements.namedItem('cat').value;
-    const params = new URLSearchParams({ cat });
-    builder.querySelectorAll('input, select').forEach((el) => {
-      if (el.name === 'cat' || !el.value) return;
-      params.set(el.name, el.value);
-    });
+    const val = (n) => builder.elements.namedItem(n).value.trim();
+    const params = new URLSearchParams({ cat: val('cat') });
+    ['name', 'venue', 'days', 'organiser'].forEach((n) => { if (val(n)) params.set(n, val(n)); });
     const url = origin + '/event?' + params.toString();
-    $('evt-link').textContent = builder.elements.namedItem('name').value ? url : 'Type the event name to make the link.';
+    const ready = val('name') && val('venue');
+    $('evt-link').textContent = ready ? url : 'Type the event name and location above. The link appears here.';
+    $('evt-actions').classList.toggle('hidden', !ready);
     $('evt-open').href = url;
-    const nm = builder.elements.namedItem('name').value || 'the upcoming event';
     $('evt-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
-      `Hello, your child is coming for ${nm}. Please fill Form 2 (event consent) for this event. It takes 2 minutes: ${url}\n\nIf you have not yet filled Form 1 (new student & coaching policy), please fill it first: ${origin}/register\n\nThank you,\nCoach Joseph Gathogo · 0746 451 222`);
+      `Hello, your child is coming for ${val('name')} (${val('venue')}). Please fill Form 2 (event consent) for this event. It takes about 3 minutes: ${url}\n\nIf you have not yet filled Form 1 (new student & coaching policy), please fill it first: ${origin}/register\n\nThank you,\nCoach Joseph Gathogo · 0746 451 222`);
   }
   builder.addEventListener('input', buildLink);
   builder.addEventListener('change', buildLink);
