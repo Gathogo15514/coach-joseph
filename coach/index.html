@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Parent Forms | Coach</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="/forms/forms.css">
+<style>
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 16px; }
+  .tabs button { background: transparent; color: var(--text); border-color: var(--line); padding: 10px 14px; min-height: 40px; font-size: 14px; }
+  .tabs button[aria-pressed="true"] { background: var(--night); color: #f4f0e8; border-color: var(--night); }
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0 0 12px; }
+  .toolbar input, .toolbar select { margin: 0; flex: 1 1 180px; width: auto; min-height: 42px; }
+  .list { display: grid; gap: 8px; }
+  .item { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; cursor: pointer; text-align: left; color: var(--text); font: inherit; width: 100%; min-height: 0; }
+  .item:hover { border-color: var(--brass); }
+  .item .who { font-weight: 600; }
+  .item .meta { color: var(--muted); font-size: 13px; grid-column: 1 / -1; }
+  .badge { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+  .badge.reg { border-color: var(--brass); color: var(--brass-dk); }
+  .empty { color: var(--muted); padding: 24px 0; text-align: center; }
+  .linkout { word-break: break-all; background: var(--ivory); border: 1px solid var(--line); border-radius: 8px; padding: 12px; font-size: 14px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><span class="name">Coach Joseph Gathogo</span><span class="role">Parent forms · Coach only</span></div></header>
+
+<main class="wrap">
+  <!-- Sign in -->
+  <section id="login" class="card" style="max-width:420px;margin:24px auto">
+    <h1>Coach sign in</h1>
+    <p class="hint">Enter the password set on your Vercel project.</p>
+    <form id="login-form">
+      <label class="f">Password<input type="password" id="pw" autocomplete="current-password" required></label>
+      <p class="err-box" id="login-err" role="alert"></p>
+      <div class="actions"><button type="submit" class="primary">Sign in</button></div>
+    </form>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="tabs noprint" role="toolbar">
+      <button type="button" data-tab="subs" aria-pressed="true">Submissions</button>
+      <button type="button" data-tab="links" aria-pressed="false">Send forms to parents</button>
+      <button type="button" id="logout" style="margin-left:auto">Sign out</button>
+    </div>
+
+    <!-- Submissions -->
+    <div id="tab-subs">
+      <div id="list-view">
+        <div class="toolbar noprint">
+          <input type="search" id="q" placeholder="Search student, parent or event">
+          <select id="kind">
+            <option value="all">All forms</option>
+            <option value="registration">Registrations</option>
+            <option value="event:nairobi">Events · Nairobi tournaments</option>
+            <option value="event:outside">Events · Outside Nairobi</option>
+            <option value="event:overnight">Events · Overnight</option>
+            <option value="event:trip">Events · Trips</option>
+          </select>
+          <button type="button" class="ghost small" id="refresh">Refresh</button>
+          <button type="button" class="ghost small" id="csv">Download spreadsheet</button>
+        </div>
+        <p class="muted" id="count"></p>
+        <div class="list" id="list"></div>
+      </div>
+      <div id="detail-view" class="hidden">
+        <div class="actions noprint" style="margin:0 0 12px">
+          <button type="button" class="ghost" id="back">← All submissions</button>
+          <button type="button" id="print">Print / save as PDF</button>
+          <button type="button" class="ghost" id="delete" style="margin-left:auto">Delete</button>
+        </div>
+        <div id="detail"></div>
+      </div>
+    </div>
+
+    <!-- Link builder -->
+    <div id="tab-links" class="hidden">
+      <section class="card">
+        <h2>Registration form</h2>
+        <p class="hint">Send once to every new family.</p>
+        <div class="linkout" id="reg-link"></div>
+        <div class="actions"><button type="button" class="small" data-copy="reg-link">Copy link</button><a class="btn ghost small" id="reg-wa" target="_blank" rel="noopener">Share on WhatsApp</a></div>
+      </section>
+
+      <section class="card">
+        <h2>Event form with details filled in</h2>
+        <p class="hint">Fill in what you know. Parents see these details locked and only add their child's information.</p>
+        <form id="builder" class="grid two">
+          <label class="f">Type of event<select name="cat"><option value="nairobi">Tournament within Nairobi</option><option value="outside">Tournament outside Nairobi (day)</option><option value="overnight">Overnight tournament or camp</option><option value="trip">Educational trip or excursion</option></select></label>
+          <label class="f">Event name<input type="text" name="name"></label>
+          <label class="f" data-for="nairobi outside overnight">Organiser<input type="text" name="organiser"></label>
+          <label class="f" data-for="trip">Purpose / activity<input type="text" name="purpose"></label>
+          <label class="f">Venue / location<input type="text" name="venue"></label>
+          <label class="f" data-for="outside overnight trip">Town and county<input type="text" name="town"></label>
+          <label class="f">Start date<input type="date" name="start"></label>
+          <label class="f" data-for="overnight">End date<input type="date" name="end"></label>
+          <label class="f" data-for="nairobi outside overnight">Section / age category<input type="text" name="section"></label>
+          <label class="f" data-for="nairobi outside overnight">Time control / rounds<input type="text" name="rounds"></label>
+          <label class="f" data-for="nairobi outside overnight">Entry fee (KES)<input type="number" name="fee" min="0"></label>
+          <label class="f">Total cost to parent (KES)<input type="number" name="cost" min="0"></label>
+          <label class="f" data-for="nairobi">Report time<input type="time" name="report"></label>
+          <label class="f" data-for="nairobi">Finish time<input type="time" name="finish"></label>
+          <label class="f" data-for="nairobi">Meeting point<input type="text" name="meet"></label>
+          <label class="f" data-for="outside overnight trip">Departure point<input type="text" name="from"></label>
+          <label class="f" data-for="outside overnight trip">Departure time<input type="time" name="depart"></label>
+          <label class="f" data-for="outside overnight trip">Return date<input type="date" name="retdate"></label>
+          <label class="f" data-for="outside overnight trip">Return time<input type="time" name="ret"></label>
+          <label class="f" data-for="outside overnight trip">Means of transport<select name="transport"><option value="">Parent chooses</option><option>Public transport (bus / matatu / train)</option><option>Hired vehicle with licensed driver</option><option>School / club bus</option><option>Organiser transport</option><option>Parent's own vehicle</option><option>Another parent's vehicle</option></select></label>
+          <label class="f" data-for="outside overnight trip">Transport company / vehicle reg.<input type="text" name="vehicle"></label>
+          <label class="f" data-for="outside overnight trip">Meals<select name="meals"><option value="">Parent chooses</option><option>Included in trip cost</option><option>Child carries packed food</option><option>Child carries money for meals</option><option>Provided by organiser</option></select></label>
+          <label class="f" data-for="overnight">Accommodation name<input type="text" name="accom"></label>
+          <label class="f" data-for="overnight">Accommodation address / phone<input type="text" name="accomcontact"></label>
+          <label class="f" data-for="overnight">Check-in<input type="date" name="checkin"></label>
+          <label class="f" data-for="overnight">Check-out<input type="date" name="checkout"></label>
+          <label class="f" data-for="overnight">Other adults travelling<input type="text" name="adults"></label>
+        </form>
+        <div class="linkout" id="evt-link" style="margin-top:14px"></div>
+        <div class="actions"><button type="button" class="small" data-copy="evt-link">Copy link</button><a class="btn ghost small" id="evt-wa" target="_blank" rel="noopener">Share on WhatsApp</a><a class="btn ghost small" id="evt-open" target="_blank" rel="noopener">Preview</a></div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script src="/forms/forms.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const CAT = { nairobi: 'Nairobi tournament', outside: 'Outside Nairobi', overnight: 'Overnight', trip: 'Trip' };
+  let password = '';
+  try { password = sessionStorage.getItem('coach_pw') || ''; } catch (e) {}
+  let items = [];
+  let current = null;
+
+  async function api(path, method = 'GET') {
+    const res = await fetch(path, { method, headers: { 'x-admin-password': password } });
+    const out = await res.json().catch(() => ({}));
+    if (res.status === 401) throw Object.assign(new Error('Wrong password.'), { auth: true });
+    if (!res.ok) throw new Error(out.error || 'Could not load. Try again.');
+    return out;
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleString('en-KE', { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  // ----- Sign in -----
+  $('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    password = $('pw').value;
+    $('login-err').textContent = '';
+    try { await load(); try { sessionStorage.setItem('coach_pw', password); } catch (e2) {} }
+    catch (err) { $('login-err').textContent = err.message; }
+  });
+  $('logout').addEventListener('click', () => {
+    try { sessionStorage.removeItem('coach_pw'); } catch (e) {}
+    location.reload();
+  });
+
+  async function load() {
+    const out = await api('/api/submissions');
+    items = out.items || [];
+    $('login').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    render();
+  }
+
+  // ----- List -----
+  function filtered() {
+    const q = $('q').value.trim().toLowerCase();
+    const k = $('kind').value;
+    return items.filter((it) => {
+      if (k === 'registration' && it.type !== 'registration') return false;
+      if (k.startsWith('event:') && !(it.type === 'event' && it.category === k.slice(6))) return false;
+      if (!q) return true;
+      return [it.student_name, it.parent_name, it.event_name, it.ref, it.parent_phone].join(' ').toLowerCase().includes(q);
+    });
+  }
+
+  function render() {
+    const list = filtered();
+    $('count').textContent = `${list.length} of ${items.length} submission${items.length === 1 ? '' : 's'}`;
+    $('list').innerHTML = list.length ? '' : '<p class="empty">No submissions yet.</p>';
+    list.forEach((it) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'item';
+      const what = it.type === 'registration' ? 'Registration' : `${CAT[it.category] || 'Event'} · ${it.event_name}`;
+      b.innerHTML = `<span class="who"></span><span class="badge ${it.type === 'registration' ? 'reg' : ''}"></span><span class="meta"></span>`;
+      b.querySelector('.who').textContent = it.student_name || '(no name)';
+      b.querySelector('.badge').textContent = it.type === 'registration' ? 'Registration' : (CAT[it.category] || 'Event');
+      b.querySelector('.meta').textContent = `${what} · ${it.parent_name} ${it.parent_phone} · ${fmtDate(it.submitted_at)} · ${it.ref}`;
+      b.addEventListener('click', () => openItem(it));
+      $('list').appendChild(b);
+    });
+  }
+  $('q').addEventListener('input', render);
+  $('kind').addEventListener('change', render);
+  $('refresh').addEventListener('click', () => load().catch((e) => alert(e.message)));
+
+  // ----- Detail -----
+  function sectionsFrom(record) {
+    const d = record.data || {};
+    const rows = Object.entries(d).map(([k, v]) => {
+      const label = k.replace(/_/g, ' ').replace(/^c /, 'Consent: ').replace(/^agree /, 'Agreed: ').replace(/^ack /, 'Acknowledged: ');
+      const val = v === true ? 'Agreed' : v === false ? 'Not agreed' : (k === 'category' ? (CAT[v] || v) : (v || '—'));
+      return [label.charAt(0).toUpperCase() + label.slice(1), String(val)];
+    });
+    return [{ title: record.type === 'registration' ? 'Registration details' : 'Event consent details', rows }];
+  }
+
+  async function openItem(it) {
+    $('list-view').classList.add('hidden');
+    $('detail-view').classList.remove('hidden');
+    $('detail').innerHTML = '<p class="muted">Loading…</p>';
+    try {
+      const rec = await api('/api/submissions?pathname=' + encodeURIComponent(it.pathname));
+      current = it;
+      const title = rec.type === 'registration'
+        ? `Student registration & consent: ${rec.data.student_name}`
+        : `Event consent: ${rec.data.student_name} · ${rec.data.event_name}`;
+      $('detail').innerHTML = ParentForms.renderCopy(title, rec.ref, fmtDate(rec.submitted_at), sectionsFrom(rec), rec.signature)
+        + `<p class="muted" style="font-size:12px">Policy version ${ParentForms.esc(rec.policy_version || '')} · Device: ${ParentForms.esc(rec.user_agent || '')}</p>`;
+      window.scrollTo(0, 0);
+    } catch (err) { $('detail').innerHTML = `<p class="err-box">${ParentForms.esc(err.message)}</p>`; }
+  }
+  $('back').addEventListener('click', () => {
+    $('detail-view').classList.add('hidden');
+    $('list-view').classList.remove('hidden');
+  });
+  $('print').addEventListener('click', () => window.print());
+  $('delete').addEventListener('click', async () => {
+    if (!current || !confirm(`Delete ${current.ref} for ${current.student_name}? This cannot be undone.`)) return;
+    try {
+      await api('/api/submissions?pathname=' + encodeURIComponent(current.pathname), 'DELETE');
+      items = items.filter((i) => i.pathname !== current.pathname);
+      $('back').click();
+      render();
+    } catch (err) { alert(err.message); }
+  });
+
+  // ----- Spreadsheet export -----
+  $('csv').addEventListener('click', () => {
+    const list = filtered();
+    const keys = ['ref', 'type', 'submitted_at'];
+    list.forEach((it) => Object.keys(it.data || {}).forEach((k) => { if (!keys.includes(k)) keys.push(k); }));
+    const cell = (v) => {
+      let s = v === undefined || v === null ? '' : String(v);
+      if (/^[=+\-@]/.test(s)) s = "'" + s; // stop spreadsheet formulas
+      return '"' + s.replace(/"/g, '""') + '"';
+    };
+    const lines = [keys.join(',')].concat(list.map((it) =>
+      keys.map((k) => cell(k in it && k !== 'data' ? it[k] : (it.data || {})[k])).join(',')
+    ));
+    const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `parent-forms-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // ----- Tabs -----
+  document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    $('tab-subs').classList.toggle('hidden', b.dataset.tab !== 'subs');
+    $('tab-links').classList.toggle('hidden', b.dataset.tab !== 'links');
+  }));
+
+  // ----- Link builder -----
+  const origin = location.origin;
+  const regUrl = origin + '/register';
+  $('reg-link').textContent = regUrl;
+  $('reg-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
+    'Hello, please complete the chess coaching registration and consent form for your child before the first session: ' + regUrl + '\n\nCoach Joseph Gathogo');
+  const builder = $('builder');
+  function buildLink() {
+    const cat = builder.elements.namedItem('cat').value;
+    builder.querySelectorAll('[data-for]').forEach((l) => l.classList.toggle('hidden', !l.dataset.for.split(' ').includes(cat)));
+    const params = new URLSearchParams({ cat });
+    builder.querySelectorAll('input, select').forEach((el) => {
+      if (el.name === 'cat' || !el.value || el.closest('.hidden')) return;
+      params.set(el.name, el.value);
+    });
+    const url = origin + '/event?' + params.toString();
+    $('evt-link').textContent = url;
+    $('evt-open').href = url;
+    const nm = builder.elements.namedItem('name').value || 'the upcoming event';
+    $('evt-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
+      `Hello, please fill in the consent form for ${nm} so your child can take part: ${url}\n\nCoach Joseph Gathogo`);
+  }
+  builder.addEventListener('input', buildLink);
+  builder.addEventListener('change', buildLink);
+  buildLink();
+  document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+    const text = $(b.dataset.copy).textContent;
+    try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
+    catch (e) { prompt('Copy this link:', text); }
+    setTimeout(() => { b.textContent = 'Copy link'; }, 1500);
+  }));
+
+  if (password) load().catch(() => { password = ''; });
+})();
+</script>
+</body>
+</html>
