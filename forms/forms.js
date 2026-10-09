@@ -6,58 +6,91 @@
   const COACH_PHONE = '0746 451 222';
 
   // ---------- Signature pad ----------
+  // Draws in the canvas's own pixel space. The canvas is sized when it is
+  // first touched (it may be hidden when the page loads) and only re-sized
+  // when its on-screen width really changes, keeping what was drawn.
   function SignaturePad(canvas) {
     const ctx = canvas.getContext('2d');
+    const INK = '#13213a';
     let drawing = false;
     let empty = true;
     let last = null;
 
-    function resize() {
-      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    function fit() {
       const rect = canvas.getBoundingClientRect();
-      const keep = empty ? null : canvas.toDataURL('image/png');
-      canvas.width = Math.round(rect.width * ratio);
-      canvas.height = Math.round(rect.height * ratio);
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      ctx.lineWidth = 2.2;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#13213a';
-      if (keep) {
-        const img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
-        img.src = keep;
+      if (rect.width < 10 || rect.height < 10) return false;
+      const ratio = Math.min(Math.max(window.devicePixelRatio || 1, 1), 3);
+      const w = Math.round(rect.width * ratio);
+      const h = Math.round(rect.height * ratio);
+      if (canvas.width === w && canvas.height === h) return true;
+      let copy = null;
+      if (!empty && canvas.width && canvas.height) {
+        copy = document.createElement('canvas');
+        copy.width = canvas.width;
+        copy.height = canvas.height;
+        copy.getContext('2d').drawImage(canvas, 0, 0);
+      }
+      canvas.width = w;
+      canvas.height = h;
+      if (copy) ctx.drawImage(copy, 0, 0, w, h);
+      return true;
+    }
+    function pos(clientX, clientY) {
+      const r = canvas.getBoundingClientRect();
+      return {
+        x: (clientX - r.left) * (canvas.width / r.width),
+        y: (clientY - r.top) * (canvas.height / r.height),
+      };
+    }
+    function start(clientX, clientY) {
+      if (!fit()) return;
+      drawing = true;
+      last = pos(clientX, clientY);
+      const lw = Math.max(2, canvas.width / 260);
+      ctx.fillStyle = INK;
+      ctx.beginPath();
+      ctx.arc(last.x, last.y, lw / 2, 0, Math.PI * 2);
+      ctx.fill();
+      if (empty) {
+        empty = false;
+        canvas.dispatchEvent(new Event('signed'));
       }
     }
-    function pos(e) {
-      const r = canvas.getBoundingClientRect();
-      return { x: e.clientX - r.left, y: e.clientY - r.top };
-    }
-    canvas.addEventListener('pointerdown', (e) => {
-      drawing = true;
-      last = pos(e);
-      canvas.setPointerCapture(e.pointerId);
-      ctx.beginPath();
-      ctx.arc(last.x, last.y, 1, 0, Math.PI * 2);
-      ctx.fillStyle = '#13213a';
-      ctx.fill();
-      empty = false;
-      canvas.dispatchEvent(new Event('signed'));
-    });
-    canvas.addEventListener('pointermove', (e) => {
+    function move(clientX, clientY) {
       if (!drawing) return;
-      const p = pos(e);
+      const p = pos(clientX, clientY);
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = Math.max(2, canvas.width / 260);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.beginPath();
       ctx.moveTo(last.x, last.y);
       ctx.lineTo(p.x, p.y);
       ctx.stroke();
       last = p;
-    });
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) =>
-      canvas.addEventListener(t, () => { drawing = false; })
-    );
-    window.addEventListener('resize', resize);
-    resize();
+    }
+    function end() { drawing = false; }
+
+    if (window.PointerEvent) {
+      canvas.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* older browsers */ }
+        start(e.clientX, e.clientY);
+      });
+      canvas.addEventListener('pointermove', (e) => { if (drawing) { e.preventDefault(); move(e.clientX, e.clientY); } });
+      ['pointerup', 'pointercancel'].forEach((t) => canvas.addEventListener(t, end));
+    } else {
+      canvas.addEventListener('mousedown', (e) => start(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => move(e.clientX, e.clientY));
+      window.addEventListener('mouseup', end);
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); const t = e.touches[0]; start(t.clientX, t.clientY); }, { passive: false });
+      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); const t = e.touches[0]; move(t.clientX, t.clientY); }, { passive: false });
+      canvas.addEventListener('touchend', end);
+    }
+    // Stop the page scrolling while signing on phones.
+    canvas.addEventListener('touchmove', (e) => { if (drawing) e.preventDefault(); }, { passive: false });
+    if (window.ResizeObserver) new ResizeObserver(() => fit()).observe(canvas);
+    fit();
 
     return {
       isEmpty: () => empty,
@@ -69,7 +102,7 @@
         // Export on a white background at a modest size to keep uploads small.
         const out = document.createElement('canvas');
         const w = 600;
-        const h = Math.round((canvas.height / canvas.width) * w);
+        const h = canvas.width ? Math.round((canvas.height / canvas.width) * w) : 170;
         out.width = w;
         out.height = h;
         const o = out.getContext('2d');

@@ -85,36 +85,14 @@
       </section>
 
       <section class="card">
-        <h2>Event form with details filled in</h2>
-        <p class="hint">Fill in what you know. Parents see these details locked and only add their child's information.</p>
+        <h2>Event link</h2>
+        <p class="hint">Fill in the event once, then share the link. Parents see these details and only add their child's information.</p>
         <form id="builder" class="grid two">
-          <label class="f">Type of event<select name="cat"><option value="nairobi">Tournament within Nairobi</option><option value="outside">Tournament outside Nairobi (day)</option><option value="overnight">Overnight tournament or camp</option><option value="trip">Educational trip or excursion</option></select></label>
+          <label class="f">Type of event<select name="cat"><option value="nairobi">Tournament within Nairobi</option><option value="outside">Tournament outside Nairobi (same day)</option><option value="overnight">Overnight tournament or camp</option><option value="trip">Educational trip</option></select></label>
           <label class="f">Event name<input type="text" name="name"></label>
-          <label class="f" data-for="nairobi outside overnight">Organiser<input type="text" name="organiser"></label>
-          <label class="f" data-for="trip">Purpose / activity<input type="text" name="purpose"></label>
-          <label class="f">Venue / location<input type="text" name="venue"></label>
-          <label class="f" data-for="outside overnight trip">Town and county<input type="text" name="town"></label>
-          <label class="f">Start date<input type="date" name="start"></label>
-          <label class="f" data-for="overnight">End date<input type="date" name="end"></label>
-          <label class="f" data-for="nairobi outside overnight">Section / age category<input type="text" name="section"></label>
-          <label class="f" data-for="nairobi outside overnight">Time control / rounds<input type="text" name="rounds"></label>
-          <label class="f" data-for="nairobi outside overnight">Entry fee (KES)<input type="number" name="fee" min="0"></label>
-          <label class="f">Total cost to parent (KES)<input type="number" name="cost" min="0"></label>
-          <label class="f" data-for="nairobi">Report time<input type="time" name="report"></label>
-          <label class="f" data-for="nairobi">Finish time<input type="time" name="finish"></label>
-          <label class="f" data-for="nairobi">Meeting point<input type="text" name="meet"></label>
-          <label class="f" data-for="outside overnight trip">Departure point<input type="text" name="from"></label>
-          <label class="f" data-for="outside overnight trip">Departure time<input type="time" name="depart"></label>
-          <label class="f" data-for="outside overnight trip">Return date<input type="date" name="retdate"></label>
-          <label class="f" data-for="outside overnight trip">Return time<input type="time" name="ret"></label>
-          <label class="f" data-for="outside overnight trip">Means of transport<select name="transport"><option value="">Parent chooses</option><option>Public transport (bus / matatu / train)</option><option>Hired vehicle with licensed driver</option><option>School / club bus</option><option>Organiser transport</option><option>Parent's own vehicle</option><option>Another parent's vehicle</option></select></label>
-          <label class="f" data-for="outside overnight trip">Transport company / vehicle reg.<input type="text" name="vehicle"></label>
-          <label class="f" data-for="outside overnight trip">Meals<select name="meals"><option value="">Parent chooses</option><option>Included in trip cost</option><option>Child carries packed food</option><option>Child carries money for meals</option><option>Provided by organiser</option></select></label>
-          <label class="f" data-for="overnight">Accommodation name<input type="text" name="accom"></label>
-          <label class="f" data-for="overnight">Accommodation address / phone<input type="text" name="accomcontact"></label>
-          <label class="f" data-for="overnight">Check-in<input type="date" name="checkin"></label>
-          <label class="f" data-for="overnight">Check-out<input type="date" name="checkout"></label>
-          <label class="f" data-for="overnight">Other adults travelling<input type="text" name="adults"></label>
+          <label class="f">Location<input type="text" name="venue"></label>
+          <label class="f">Number of days<input type="number" name="days" min="1" max="30" value="1"></label>
+          <label class="f">Organisers<input type="text" name="organiser"></label>
         </form>
         <div class="linkout" id="evt-link" style="margin-top:14px"></div>
         <div class="actions"><button type="button" class="small" data-copy="evt-link">Copy link</button><a class="btn ghost small" id="evt-wa" target="_blank" rel="noopener">Share on WhatsApp</a><a class="btn ghost small" id="evt-open" target="_blank" rel="noopener">Preview</a></div>
@@ -279,14 +257,13 @@
   const builder = $('builder');
   function buildLink() {
     const cat = builder.elements.namedItem('cat').value;
-    builder.querySelectorAll('[data-for]').forEach((l) => l.classList.toggle('hidden', !l.dataset.for.split(' ').includes(cat)));
     const params = new URLSearchParams({ cat });
     builder.querySelectorAll('input, select').forEach((el) => {
-      if (el.name === 'cat' || !el.value || el.closest('.hidden')) return;
+      if (el.name === 'cat' || !el.value) return;
       params.set(el.name, el.value);
     });
     const url = origin + '/event?' + params.toString();
-    $('evt-link').textContent = url;
+    $('evt-link').textContent = builder.elements.namedItem('name').value ? url : 'Type the event name to make the link.';
     $('evt-open').href = url;
     const nm = builder.elements.namedItem('name').value || 'the upcoming event';
     $('evt-wa').href = 'https://wa.me/?text=' + encodeURIComponent(
