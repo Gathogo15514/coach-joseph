@@ -81,6 +81,13 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--brass); out
   margin: 0 0 10px; cursor: pointer; background: var(--ivory);
 }
 .check input { width: 22px; height: 22px; margin: 1px 0 0; flex: none; accent-color: var(--brass-dk); }
+.agree-group.locked .check { opacity: .5; cursor: not-allowed; }
+.agree-status { font-size: 14px; font-weight: 600; color: var(--brass-dk); margin: 4px 0 12px; }
+.terms-box { max-height: 340px; overflow-y: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--ivory); padding: 4px 16px 12px; font-size: 14px; }
+.terms-box h3 { font: 600 16px/1.3 var(--serif); margin: 14px 0 4px; }
+.terms-box p { margin: 0 0 6px; }
+.terms-end { text-align: center; color: var(--muted); font-size: 13px; padding-top: 8px; }
+button.primary[disabled] { opacity: .55; cursor: not-allowed; }
 .yn {
   display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
   padding: 12px 0; border-bottom: 1px solid var(--line);

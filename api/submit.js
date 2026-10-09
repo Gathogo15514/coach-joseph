@@ -50,6 +50,12 @@ export async function POST(request) {
   const required = type === 'registration'
     ? ['student_name', 'student_dob', 'parent1_name', 'parent1_phone', 'signed_name', 'agree_policy']
     : ['category', 'event_name', 'student_name', 'parent_name', 'parent_phone', 'signed_name', 'agree_terms'];
+  // Every agreement box must be ticked and the terms read in full.
+  const agree = type === 'registration'
+    ? ['agree_policy', 'agree_24h', 'agree_events', 'agree_liability', 'agree_true']
+    : ['agree_read', 'agree_supervision', 'agree_medical', 'agree_conduct', 'agree_terms', 'agree_guardian']
+        .concat(data.category === 'overnight' ? ['agree_overnight'] : []);
+  required.push(...agree, 'terms_read_at');
   const missing = required.filter((k) => data[k] === undefined || data[k] === '' || data[k] === false);
   if (missing.length) return json({ error: 'Some required fields are empty.', missing }, 400);
   if (type === 'event' && !CATEGORIES.has(data.category)) return json({ error: 'Unknown event category.' }, 400);

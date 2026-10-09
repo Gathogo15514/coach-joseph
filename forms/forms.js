@@ -120,6 +120,7 @@
   }
 
   function labelFor(el) {
+    if (el.dataset.label) return el.dataset.label;
     const row = el.closest('.yn');
     if (row) return row.querySelector('.q').textContent.trim();
     const group = el.closest('[data-group-label]');
@@ -210,6 +211,50 @@
     return html;
   }
 
+  // ---------- Terms gate ----------
+  // The agreement boxes stay locked until the parent has scrolled to the end
+  // of the terms ([data-terms]). Submit stays locked until every visible
+  // agreement box is ticked. The time the terms were read is saved.
+  function setupTermsGate(form, submitBtn, submitLabel) {
+    const terms = form.querySelector('[data-terms]');
+    const group = form.querySelector('.agree-group');
+    if (!terms || !group) return;
+    const stamp = group.querySelector('input[name="terms_read_at"]');
+    const status = group.querySelector('.agree-status');
+    let read = false;
+
+    const boxes = () => [...group.querySelectorAll('input[type=checkbox]')].filter(isVisible);
+    function update() {
+      const all = boxes();
+      const done = all.filter((b) => b.checked).length;
+      const ok = read && done === all.length;
+      submitBtn.disabled = !ok;
+      submitBtn.textContent = ok ? submitLabel : (read ? `Tick all boxes to submit (${done} of ${all.length})` : 'Read the terms to continue');
+      if (status) status.textContent = read ? `${done} of ${all.length} boxes ticked` : 'Scroll through the terms above to unlock these boxes.';
+    }
+    function markRead() {
+      if (read) return;
+      read = true;
+      if (stamp) stamp.value = new Date().toISOString();
+      group.classList.remove('locked');
+      group.querySelectorAll('input[type=checkbox]').forEach((b) => { b.disabled = false; });
+      update();
+    }
+    function check() {
+      if (read || !isVisible(terms) || terms.offsetParent === null) return;
+      if (terms.scrollTop + terms.clientHeight >= terms.scrollHeight - 24) markRead();
+    }
+    group.classList.add('locked');
+    group.querySelectorAll('input[type=checkbox]').forEach((b) => { b.disabled = true; });
+    terms.addEventListener('scroll', check, { passive: true });
+    const det = terms.closest('details');
+    if (det) det.addEventListener('toggle', () => setTimeout(check, 60));
+    group.addEventListener('change', update);
+    form.addEventListener('gate:update', update);
+    setTimeout(check, 300);
+    update();
+  }
+
   // ---------- Wire up a form ----------
   function setupForm(opts) {
     const form = document.getElementById(opts.formId);
@@ -235,6 +280,7 @@
 
     const errBox = form.querySelector('.err-box');
     const submitBtn = form.querySelector('button[type=submit]');
+    setupTermsGate(form, submitBtn, opts.submitLabel);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -275,6 +321,7 @@
         errBox.textContent = `${err.message} If it keeps failing, WhatsApp ${COACH_PHONE}.`;
         submitBtn.disabled = false;
         submitBtn.textContent = opts.submitLabel;
+        form.dispatchEvent(new Event('gate:update'));
       }
     });
 
