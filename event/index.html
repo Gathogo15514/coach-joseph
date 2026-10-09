@@ -28,7 +28,7 @@
     <span>
       <strong>New parent? Fill Form 1 first.</strong>
       Every child needs the coaching policy form once before any event.
-      <a href="/register">Click here to fill Form 1: New student &amp; coaching policy</a>, then come back to this page.
+      <a href="/register">Click here to fill Form 1: New student &amp; coaching policy</a>, then come back to this page. You can <a href="/policy" target="_blank" rel="noopener">read the coaching policy here</a>.
     </span>
   </div>
 
@@ -72,7 +72,7 @@
     <div class="yn" data-required data-cats="outside overnight trip"><span class="q">My child may travel to and from the event as arranged by the coach</span><span class="opts"><label><input type="radio" name="c_travel" value="Yes">Yes</label><label><input type="radio" name="c_travel" value="No">No</label></span></div>
     <div class="yn" data-required data-cats="overnight"><span class="q">My child may stay overnight for this event</span><span class="opts"><label><input type="radio" name="c_overnight" value="Yes">Yes</label><label><input type="radio" name="c_overnight" value="No">No</label></span></div>
     <div class="yn" data-required><span class="q">Photos / videos from this event may be shared (first name only)</span><span class="opts"><label><input type="radio" name="c_photos" value="Yes">Yes</label><label><input type="radio" name="c_photos" value="No">No</label></span></div>
-    <label class="check" style="margin-top:14px" data-label="The Chess Coaching Policy I signed applies to this event"><input type="checkbox" name="agree_terms" required><span>The <a href="/register" target="_blank" rel="noopener">Chess Coaching Policy</a> I signed applies to this event.<span class="req" style="color:var(--error)">*</span></span></label>
+    <label class="check" style="margin-top:14px" data-label="The Chess Coaching Policy I signed applies to this event"><input type="checkbox" name="agree_terms" required><span>The <a href="/policy" target="_blank" rel="noopener">Chess Coaching Policy</a> I signed in Form 1 applies to this event, including its tournament, travel and liability terms.<span class="req" style="color:var(--error)">*</span></span></label>
   </section>
 
   <section class="card" data-section="Signature">
@@ -127,7 +127,8 @@
       + '<p>This form only opens from the event link Coach Joseph sends you, so the event details are already filled in.</p>'
       + '<p>Don\'t have it? WhatsApp <strong>0746 451 222</strong> and ask for the event link.</p>'
       + '<p>Looking to start coaching sessions or registering your child for the first time? '
-      + '<a href="/register"><strong>Fill Form 1: New student &amp; coaching policy</strong></a>.</p></div>';
+      + '<a href="/register"><strong>Fill Form 1: New student &amp; coaching policy</strong></a>.</p>'
+      + '<p><a href="/policy">Read the Chess Coaching Policy</a></p></div>';
     return;
   }
   if (fromLink) {
