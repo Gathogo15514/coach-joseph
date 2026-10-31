@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /coach/
+Disallow: /api/
+
+Sitemap: https://coach.chesslead.org/sitemap.xml
